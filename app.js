@@ -1,16 +1,18 @@
 const express=require('express')
 const app=express()
 const bodyparser=require('body-parser');
+const path=require('path')
 
 const PORT=3000;
 app.use(bodyparser.urlencoded({extended:false}))
 
-
-app.use('/admin',require('./routes/admin'))
 app.use(require('./routes/shop'))
+app.use('/admin',require('./routes/admin'))
+
+
 
 app.use((req,res)=>{
-    res.status(404).send('<h1> Page not found </h1>')
+    res.status(404).sendFile(path.join(__dirname,'views','error.html'))
 })
 
 app.listen(PORT,()=>{
