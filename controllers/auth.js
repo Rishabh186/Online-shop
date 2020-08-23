@@ -1,6 +1,6 @@
 
 exports.getLogin=(req,res,next)=>{
-    // console.log(req.session.isLoggedin);
+    console.log(req.session.isLoggedin);
     res.render('auth/login',{
         path:'/login',
         pageTitle:'Login',
@@ -9,6 +9,7 @@ exports.getLogin=(req,res,next)=>{
 };
 
 exports.postLogin=(req,res,next)=>{
-    // req.session.isLoggedin=true,
+    req.session.isLoggedin=true,
+    isAuthenticated=true,
     res.redirect('/')
 };

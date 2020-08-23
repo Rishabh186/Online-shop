@@ -2,13 +2,20 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose=require('mongoose')
 const path = require('path');
-// 0rJJNc6iHqh7d4n9
+const session=require('express-session');
+const MongoDBStore = require('connect-mongodb-session')(session);
+
 const errorController = require('./controllers/error');
 
 const app = express();
+const MONGO_URI='mongodb+srv://rishabh:0rJJNc6iHqh7d4n9@cluster0.4ynev.mongodb.net/shop?retryWrites=true&w=majority';
 
 app.set('view engine', 'ejs');
 
+const store=new MongoDBStore({
+    uri:MONGO_URI,
+    collection:'sessions'
+})
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const authRoutes=require('./routes/auth');
@@ -16,6 +23,12 @@ const authRoutes=require('./routes/auth');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(session({
+ secret: 'This is a secret',
+  resave: false,
+  saveUninitialized: false,
+  store:store
+}))
 
 app.use((req,res,next)=>{
     User.findById("5f402cbf13170d126ce03a7b")
@@ -36,7 +49,7 @@ app.use(authRoutes);
 app.use(errorController.get404);
 const User=require('./models/user')
 
-mongoose.connect('mongodb+srv://rishabh:0rJJNc6iHqh7d4n9@cluster0.4ynev.mongodb.net/shop?retryWrites=true&w=majority',{
+mongoose.connect(MONGO_URI,{
     useNewUrlParser:true,
     useUnifiedTopology:true
 })
