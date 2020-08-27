@@ -4,6 +4,8 @@ const mongoose=require('mongoose')
 const path = require('path');
 const session=require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
+const csrf=require('csurf')
+const flash=require('connect-flash')
 
 const errorController = require('./controllers/error');
 const app = express();
@@ -15,6 +17,8 @@ const store=new MongoDBStore({
     uri:MONGO_URI,
     collection:'sessions'
 })
+const csrfProtection=csrf();    // genereating middleware
+
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const authRoutes=require('./routes/auth');
@@ -28,7 +32,8 @@ app.use(session({
   saveUninitialized: false,
   store:store
 }))
-
+app.use(csrfProtection)    //Added csrf token as middleware
+app.use(flash())
 app.use((req, res, next) => {
     if (!req.session.user) {
       return next();
@@ -40,6 +45,12 @@ app.use((req, res, next) => {
       })
       .catch(err => console.log(err));
   });
+
+  app.use((req,res,next)=>{
+    res.locals.isAuthenticated= req.session.isLoggedIn,
+    res.locals.csrfToken=req.csrfToken(),      //Token generator
+    next()
+  })
 
 
 app.use('/admin', adminRoutes);
