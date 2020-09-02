@@ -22,16 +22,21 @@ check('email')
         return Promise.reject("E-Mail already exists!");
       }
     })
-}),
+})
+.normalizeEmail(),
  
 body(
     'password',
     'Please enter a password with alphanumeric characters only and at least 5 characters'
     )
 .isLength({min:5})
-.isAlphanumeric(),
+.isAlphanumeric()
+.trim(),
 
-body('confirmPassword').custom((value,{req})=>{
+body('confirmPassword')
+.trim()
+.custom((value,{req})=>{
+    
     if(value!==req.body.password){
         throw new Error("Password did not match");
     }
@@ -41,7 +46,20 @@ body('confirmPassword').custom((value,{req})=>{
 authController.postSignup);
 
 
-router.post('/login', authController.postLogin);
+router.post('/login',
+[
+  body('email')
+  .isEmail()
+  .withMessage('Please enter a valid email address.')
+   .normalizeEmail(),
+
+   body('password','Invalid Password.')
+    .isLength({min:5})
+    .isAlphanumeric()
+    .trim()
+
+] ,
+authController.postLogin);
 
 
 router.post('/logout', authController.postLogout);
