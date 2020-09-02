@@ -23,7 +23,7 @@ check('email')
       }
     })
 }),
-
+ 
 body(
     'password',
     'Please enter a password with alphanumeric characters only and at least 5 characters'
