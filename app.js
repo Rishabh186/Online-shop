@@ -33,6 +33,13 @@ app.use(session({
   store:store
 }))
 app.use(csrfProtection)    //Added csrf token as middleware
+
+app.use((req,res,next)=>{
+  res.locals.isAuthenticated= req.session.isLoggedIn,
+  res.locals.csrfToken=req.csrfToken(),      //Token generator
+  next()
+})
+
 app.use(flash())
 app.use((req, res, next) => {
     if (!req.session.user) {
@@ -40,24 +47,35 @@ app.use((req, res, next) => {
     }
     User.findById(req.session.user._id)
       .then(user => {
+        // throw new Error("Dummy")   //Inside synchronous code error is thrown like this
+        if(!user){
+          next();
+      }
         req.user = user;
         next();
       })
-      .catch(err => console.log(err));
+      .catch(err=>{
+        next(new Error(err));   //Inside the aynchronous code error is thrown like this
+        });
   });
 
-  app.use((req,res,next)=>{
-    res.locals.isAuthenticated= req.session.isLoggedIn,
-    res.locals.csrfToken=req.csrfToken(),      //Token generator
-    next()
-  })
+ 
 
 
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
 
+app.get('/500',errorController.get500);
 app.use(errorController.get404);
+app.use((error,req,res,next)=>{
+  res.status(500).render('500', {
+    pageTitle: 'Error occured',
+    path: '/500',
+    isAuthenticated:req.session.isLoggedIn
+})
+})
+
 const User=require('./models/user')
 
 mongoose.connect(MONGO_URI,{

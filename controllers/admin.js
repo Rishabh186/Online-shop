@@ -15,7 +15,7 @@ exports.getAddProduct = (req, res, next) => {
 
 exports.postAddProduct = (req, res, next) => {
   const title = req.body.title;
-  const imageUrl = req.body.imageUrl;
+  const image = req.body.image;
   const price = req.body.price;
   const description = req.body.description;
   const errors = validationResult(req);
@@ -42,7 +42,7 @@ exports.postAddProduct = (req, res, next) => {
     title: title,
     price: price,
     description: description,
-    imageUrl: imageUrl,
+    image: image,
     userId: req.user
   });
   product
@@ -53,7 +53,10 @@ exports.postAddProduct = (req, res, next) => {
       res.redirect('/admin/products');
     })
     .catch(err => {
-      console.log(err);
+      // res.redirect('/500');
+      const error=new Error(err);
+      error.httpStatusCode=500;
+      return next(error);
     });
 };
 
