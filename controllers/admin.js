@@ -40,7 +40,7 @@ exports.postAddProduct = (req, res, next) => {
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
-    console.log(errors.array());
+    // console.log(errors.array());
     return res.status(422).render('admin/edit-product', {
       pageTitle: 'Add Product',
       path: '/admin/add-product',
@@ -70,7 +70,7 @@ exports.postAddProduct = (req, res, next) => {
     .save()
     .then(result => {
       // console.log(result);
-      console.log('Created Product');
+      // console.log('Created Product');
       res.redirect('/admin/products');
     })
     .catch(err => {
@@ -178,7 +178,7 @@ exports.getProducts = (req, res, next) => {
     // .select('title price -_id')
     // .populate('userId', 'name')
     .then(products => {
-      console.log(products);
+      // console.log(products);
       res.render('admin/products', {
         prods: products,
         pageTitle: 'Admin Products',
@@ -211,4 +211,4 @@ exports.postDeleteProduct = (req, res, next) => {
       error.httpStatusCode = 500;
       return next(error);
     });
-};
+}
