@@ -14,4 +14,12 @@
 
 7)EJS
 
-This site is hosted on heroku [Click here](https://e-node-cart.herokuapp.com)
+• An e-commerce book store website  where users can sell or purchase their books
+
+• Implemented **JWT tokens for authorization**
+
+• Authorized users can upload, edit and delete the image of book for sale
+
+• Integrated **Payment gateway in the site using Stripe**
+
+**Check this out here** [Click here](https://book-kart.herokuapp.com/)
